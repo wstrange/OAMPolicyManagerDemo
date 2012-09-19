@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="AuthenticationScheme" type="AuthenticationScheme"/>
+    <xs:element name="AuthenticationSchemes" type="AuthenticationSchemes"/>
+    <xs:element name="HostIdentifier" type="HostIdentifier"/>
+    <xs:element name="HostIdentifiers" type="HostIdentifiers"/>
+    <xs:element name="ResourceType" type="ResourceType"/>
+    <xs:element name="ResourceTypes" type="ResourceTypes"/>
+    <xs:element name="ApplicationDomain" type="ApplicationDomain"/>
+    <xs:element name="ApplicationDomains" type="ApplicationDomains"/>
+    <xs:element name="Resource" type="Resource"/>
+    <xs:element name="AuthenticationPolicy" type="AuthenticationPolicy"/>
+    <xs:element name="AuthorizationPolicy" type="AuthorizationPolicy"/>
+    <xs:element name="TokenIssuancePolicy" type="TokenIssuancePolicy"/>
+    
+    <xs:complexType name="Base">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="id" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element minOccurs="0" name="description" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="AuthenticationScheme">
+        <xs:complexContent>
+            <xs:extension base="Base">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="authnModuleName" type="xs:string"/>
+                    <xs:element name="authnSchemeLevel" type="xs:int"/>
+                    <xs:element minOccurs="0" name="challengeMechanism" type="SchemeChallengeMechanism"/>
+                    <xs:element minOccurs="0" name="ChallengeParameters">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0"
+                                    name="challengeParameter" type="Entry"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0"
+                        name="challengeRedirectURL" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="AuthenticationSchemes">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" ref="AuthenticationScheme"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="HostIdentifier">
+        <xs:complexContent>
+            <xs:extension base="Base">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Hosts">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" name="host" type="Host"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="HostIdentifiers">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" ref="HostIdentifier"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Host">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="hostName" type="xs:string"/>
+            <xs:element minOccurs="0" name="port" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ResourceType">
+        <xs:complexContent>
+            <xs:extension base="Base">
+                <xs:sequence>
+                    <xs:element name="readOnly" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="Operations">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" name="operation" type="Operation"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="ResourceTypes">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" ref="ResourceType"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Operation">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="readOnly" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ApplicationDomain">
+        <xs:complexContent>
+            <xs:extension base="Base">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Resources">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" ref="Resource"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="AuthenticationPolicies">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" ref="AuthenticationPolicy"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="AuthorizationPolicies">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" ref="AuthorizationPolicy"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="TokenIssuancePolicies">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" ref="TokenIssuancePolicy"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="ApplicationDomains">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" ref="ApplicationDomain"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Policy">
+        <xs:complexContent>
+            <xs:extension base="Base">
+                <xs:sequence>
+                    
+                    <xs:element minOccurs="0"
+                                name="applicationDomainName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Resources">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" name="Resource" type="xs:string"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    
+                    <xs:element minOccurs="0" name="successRedirectURL" type="xs:string"/>
+                    <xs:element minOccurs="0" name="failureRedirectURL" type="xs:string"/>
+                    <xs:element minOccurs="0" name="successResponses" type="SuccessResponses"/>
+                    
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="AuthenticationPolicy">
+        <xs:complexContent>
+            <xs:extension base="Policy">
+                <xs:sequence>
+                    <xs:element minOccurs="0"
+                        name="authenticationSchemeName" type="xs:string"/>
+                    <xs:element name="authnLevel" type="xs:int"/>
+                    <xs:element default="true"
+                        name="usingDefaultAuthnScheme" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="AuthorizationPolicy">
+        <xs:complexContent>
+            <xs:extension base="Policy">
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Conditions">
+                        <xs:complexType>
+                            <xs:sequence>
+                              <xs:element minOccurs="0" maxOccurs="unbounded" name="identityCondition" type="IdentityCondition"/>
+                              <xs:element minOccurs="0" maxOccurs="unbounded" name="ip4RangeCondition" type="IP4RangeCondition"/>
+                              <xs:element minOccurs="0" maxOccurs="unbounded" name="timeIntervalCondition" type="TimeIntervalCondition"/>
+                              <xs:element minOccurs="0" maxOccurs="unbounded" name="attributeCondition" type="AttributeCondition"/>
+                              <xs:element minOccurs="0" maxOccurs="unbounded" name="trueCondition" type="TrueCondition"/>
+                          </xs:sequence>
+                        </xs:complexType>
+                </xs:element>
+                    
+                <xs:element minOccurs="0" name="Rules">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded"
+                                      minOccurs="0" name="rule" type="Rule"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="TokenIssuancePolicy">
+        <xs:complexContent>
+            <xs:extension base="Policy">
+                <xs:sequence>
+                <xs:element minOccurs="0" name="Conditions">
+                        <xs:complexType>
+                            <xs:sequence>
+                              <xs:element minOccurs="0" maxOccurs="unbounded" name="tokenRequestorIdentityCondition" type="TokenRequestorIdentityCondition"/>
+                          </xs:sequence>
+                        </xs:complexType>
+                </xs:element>
+                    
+                <xs:element minOccurs="0" name="Rules">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded"
+                                      minOccurs="0" name="rule" type="Rule"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Resource">
+        <xs:complexContent>
+            <xs:extension base="Base">
+                <xs:sequence>
+                    <xs:element minOccurs="0"
+                        name="applicationDomainName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="hostIdentifierName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="protectionLevel" type="ResourceProtectionLevel"/>
+                    <xs:element minOccurs="0" name="resourceURL" type="xs:string"/>
+                    <xs:element minOccurs="0" name="queryString" type="xs:string"/>
+                    <xs:element minOccurs="0" name="QueryParameters">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" name="queryParameter" type="Entry"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="resourceTypeName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Operations">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded"
+                                    minOccurs="0" name="operation" type="xs:string"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Condition">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string"/>
+          <xs:element name="description" type="xs:string"/>
+          <xs:element name="conditionType" type="ConditionType"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="IdentityCondition">          
+      <xs:complexContent>
+        <xs:extension base="Condition">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="Identities">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" 
+                                    name="identity" type="Identity"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="IP4RangeCondition">        
+      <xs:complexContent>
+        <xs:extension base="Condition">
+          <xs:sequence>
+              <xs:element minOccurs="0" name="IP4Ranges">
+                  <xs:complexType>
+                      <xs:sequence>
+                          <xs:element maxOccurs="unbounded" minOccurs="0" 
+                                      name="ip4Range" type="IP4Range"/>
+                      </xs:sequence>
+                  </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="TimeIntervalCondition">        
+      <xs:complexContent>
+        <xs:extension base="Condition">
+          <xs:sequence>
+              <xs:element minOccurs="0" name="TimeIntervals">
+                  <xs:complexType>
+                      <xs:sequence>
+                          <xs:element maxOccurs="unbounded" minOccurs="0" 
+                                      name="timeInterval" type="TimeInterval"/>
+                      </xs:sequence>
+                  </xs:complexType>
+              </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="TokenRequestorIdentityCondition">          
+      <xs:complexContent>
+        <xs:extension base="Condition">
+          <xs:sequence>
+              <xs:element minOccurs="0" name="Identities">
+                  <xs:complexType>
+                      <xs:sequence>
+                          <xs:element minOccurs="0" maxOccurs="unbounded"
+                                      name="identity" type="TokenIdentity"/>
+                          <xs:element minOccurs="0" maxOccurs="unbounded"  
+                                      name="partners" type="xs:string"/>
+                      </xs:sequence>
+                  </xs:complexType>
+              </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="AttributeCondition">      
+      <xs:complexContent>
+        <xs:extension base="Condition">
+          <xs:sequence>
+              <xs:element minOccurs="0" name="attributeCombiner" type="AttributeCriteriaCombiner"/>
+              <xs:element minOccurs="0" name="Criteria">
+                  <xs:complexType>
+                      <xs:sequence>
+                          <xs:element maxOccurs="unbounded" minOccurs="0"
+                              name="criterion" type="AttributeCriterion"/>
+                      </xs:sequence>
+                  </xs:complexType>
+              </xs:element>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="TrueCondition">      
+      <xs:complexContent>
+        <xs:extension base="Condition">
+        <xs:sequence/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Identity">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="name" type="xs:string"/>
+            <xs:element minOccurs="0" name="searchFilter" type="xs:string"/>
+            <xs:element minOccurs="0" name="identityDomain" type="xs:string"/>
+            <xs:element minOccurs="0" name="type" type="IdentityType"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="TokenIdentity">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="name" type="xs:string"/>
+            <xs:element minOccurs="0" name="searchFilter" type="xs:string"/>
+            <xs:element minOccurs="0" name="identityDomain" type="xs:string"/>
+            <xs:element minOccurs="0" name="type" type="TokenRequestorIdentityType"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="IP4Range">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="fromAddress" type="xs:string"/>
+            <xs:element minOccurs="0" name="toAddress" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="TimeInterval">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="beginTime" type="TimeOfDay"/>
+            <xs:element minOccurs="0" name="endTime" type="TimeOfDay"/>
+            <xs:element minOccurs="0" name="DaysOfWeek">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0"
+                            name="dayOfWeek" type="DayOfWeek"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TimeOfDay">
+        <xs:sequence>
+            <xs:element name="hours" type="xs:int"/>
+            <xs:element name="minutes" type="xs:int"/>
+            <xs:element name="seconds" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="AttributeCriterion">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="name" type="xs:string"/>
+            <xs:element minOccurs="0" name="namespace" type="ResponseNamespace"/>
+            <xs:element minOccurs="0" name="operator" type="AttributeOperator"/>
+            <xs:element minOccurs="0" name="value" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Rule">
+        <xs:sequence>
+            <xs:element name="combinerType" type="CombinerType"/>
+            <xs:element name="combiner" type="RuleCombiner"/>
+            <xs:element name="effect" type="RuleEffect"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="RuleCombiner">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="expression" type="xs:string"/>
+            <xs:element minOccurs="0" name="simpleCombiner" type="SimpleCombiner"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="SimpleCombiner">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="combinerMode" type="RuleConditionCombiner"/>
+            <xs:element minOccurs="0" name="Conditions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0"
+                            name="condition" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Entry">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="key" type="xs:string"/>
+            <xs:element minOccurs="0" name="value" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="SuccessResponses">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" 
+                name="response" type="Response"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="Response">        
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element minOccurs="0" name="responseType" type="ResponseType"/>
+            <xs:element minOccurs="0" name="responseValue" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="ConditionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TEMPORAL"/>
+            <xs:enumeration value="IP4_RANGE"/>
+            <xs:enumeration value="IDENTITY"/>
+            <xs:enumeration value="TOKEN_REQUESTOR_IDENTITY"/>
+            <xs:enumeration value="ATTRIBUTE"/>
+            <xs:enumeration value="TRUE"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="IdentityType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="USER"/>
+            <xs:enumeration value="GROUP"/>
+            <xs:enumeration value="LDAP_SEARCH_FILTER"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TokenRequestorIdentityType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="USER"/>
+            <xs:enumeration value="GROUP"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DayOfWeek">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SUNDAY"/>
+            <xs:enumeration value="MONDAY"/>
+            <xs:enumeration value="TUESDAY"/>
+            <xs:enumeration value="WEDNESDAY"/>
+            <xs:enumeration value="THURSDAY"/>
+            <xs:enumeration value="FRIDAY"/>
+            <xs:enumeration value="SATURDAY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AttributeCriteriaCombiner">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALL"/>
+            <xs:enumeration value="ANY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ResponseNamespace">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="REQUEST"/>
+            <xs:enumeration value="SESSION"/>
+            <xs:enumeration value="USER"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AttributeOperator">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EQUALS"/>
+            <xs:enumeration value="STARTS_WITH"/>
+            <xs:enumeration value="ENDS_WITH"/>
+            <xs:enumeration value="CONTAINS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CombinerType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SIMPLE"/>
+            <xs:enumeration value="EXPRESSION"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RuleConditionCombiner">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALL"/>
+            <xs:enumeration value="ANY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RuleEffect">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALLOW"/>
+            <xs:enumeration value="DENY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ResponseType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="COOKIE"/>
+            <xs:enumeration value="HEADER"/>
+            <xs:enumeration value="SESSION"/>
+            <xs:enumeration value="IDENTITY_ASSERTION"/>
+            <xs:enumeration value="ATTRIBUTE_ASSERTION"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ResourceProtectionLevel">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PROTECTED"/>
+            <xs:enumeration value="UNPROTECTED"/>
+            <xs:enumeration value="EXCLUDED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="SchemeChallengeMechanism">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FORM"/>
+            <xs:enumeration value="BASIC"/>
+            <xs:enumeration value="X509"/>
+            <xs:enumeration value="WNA"/>
+            <xs:enumeration value="DAP"/>
+            <xs:enumeration value="OAM10G"/>
+            <xs:enumeration value="NONE"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

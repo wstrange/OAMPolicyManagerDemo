@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='OAMPolicyManager' version='1.0'>
+	<schema type='-xmlschema' package='com.demo.jaxb' name='OAMPolicy'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/OAMPolicy/oam-policyadmin-11.1.2.0.0.xsd' origLocation='oam-policyadmin-11.1.2.0.0.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+</schemas>
