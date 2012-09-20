@@ -1,0 +1,3 @@
+# Sample Application Input
+#Application Name, Application Role Name, Associated LDAP Group Name, Application URL, Application Approver
+TestApp1,TestAppRole,TestGroup1,/app/testapp1/**,AppApprover
