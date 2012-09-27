@@ -1,3 +1,5 @@
-# Sample Application Input
-#Application Name, Application Role Name, Associated LDAP Group Name, Application URL, Application Approver
-TestApp1,TestAppRole,TestGroup1,/app/testapp1/**,AppApprover
+# Sample Application Input File
+# Application Name, Application Role Name, Associated LDAP Group Name, Application URL, Application Approver
+TestApp1|TestAppRole1|cn=Engineering,ou=People,dc=example,dc=com|/app/eng/**|user1
+TestApp2|TestAppRole2|cn=HR,ou=People,dc=example,dc=com|/app/hr/**|user1
+#TestApp3|TestAppRole3|cn=Finance,ou=People,dc=example,dc=com|/app/finance/**|user1

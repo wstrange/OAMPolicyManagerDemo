@@ -1,0 +1,6 @@
+#!/bin/bash 
+. ./env.sh
+
+curl -u $USER:$PW $URL/authzpolicy?appdomain=$APPDOMAIN 
+curl -u $USER:$PW $URL/authnpolicy?appdomain=$APPDOMAIN 
+ 

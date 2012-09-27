@@ -1,0 +1,5 @@
+#!/bin/bash 
+. ./env.sh
+
+curl -u $USER:$PW -H "Content-Type: application/xml" --request POST --data "@authz1.xml" $URL/authzpolicy?appdomain=$APPDOMAIN 
+ 

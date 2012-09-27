@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuthorizationPolicy>
+   <name>TestApp2</name>
+   <description>AuthZ Policy for TestApp2. Auto Created at Wed Sep 26 10:47:50 MDT 2012</description>
+   <applicationDomainName>OAMApplication</applicationDomainName>
+   <Resources />
+   <successResponses />
+   <Conditions>
+      <identityCondition>
+         <name>GroupCondition-hr</name>
+         <Identities>
+            <identity>
+	       <name>hrgroup</name>
+               <searchFilter>hr</searchFilter>
+               <identityDomain>OUD</identityDomain>
+               <type>GROUP</type>
+            </identity>
+         </Identities>
+      </identityCondition>
+   </Conditions>
+   <Rules>
+      <rule>
+         <combinerType>SIMPLE</combinerType>
+         <combiner>
+            <simpleCombiner>
+               <combinerMode>ALL</combinerMode>
+               <Conditions>
+                  <condition>GroupCondition-hr</condition>
+               </Conditions>
+            </simpleCombiner>
+         </combiner>
+         <effect>ALLOW</effect>
+      </rule>
+   </Rules>
+</AuthorizationPolicy>

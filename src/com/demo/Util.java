@@ -49,7 +49,18 @@ public class Util {
         int i = x.lastIndexOf("id=") + 3;
         return x.substring(i);
     }
-    
+
+    /**
+     *  We just need the group name for OAM - so stripp off the cn=xxx stuff
+     * @param ldapGroup with full DN (e.g. cn=Finance,dc=blah,dc=com)
+     * @return  Just the group name (e.g. Finance)
+     */
+    static String cleanLdapGroup(String ldapGroup) {
+        if( ! ldapGroup.startsWith("cn=")) {
+            return ldapGroup; // already clean
+        }
+        return  ldapGroup.substring(3, ldapGroup.indexOf(","));        
+    }
     
     
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuthorizationPolicy>
+   <name>temp</name>
+   <description>temp</description>
+   <applicationDomainName>OAMApplication</applicationDomainName>
+   <Resources />
+   <successResponses />
+   <Conditions>
+      <identityCondition>
+         <name>ic1</name>
+         <description>ic1</description>
+         <Identities>
+            <identity>
+               <searchFilter>"(dept=hr)"</searchFilter>
+               <identityDomain>UserIdentityStore1</identityDomain>
+               <type>LDAP_SEARCH_FILTER</type>
+            </identity>
+         </Identities>
+      </identityCondition>
+   </Conditions>
+   <Rules>
+      <rule>
+         <combinerType>EXPRESSION</combinerType>
+         <combiner>
+            <expression>ic1</expression>
+         </combiner>
+         <effect>ALLOW</effect>
+      </rule>
+   </Rules>
+</AuthorizationPolicy>
+

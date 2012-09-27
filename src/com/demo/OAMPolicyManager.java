@@ -46,7 +46,8 @@ import javax.xml.bind.JAXBException;
 /**
  * Demo App that shows how to use OAM's Policy Management REST APIs
  *
- * There is almost zero error checking here. This is for illustrative purposes. YMMV
+ * There is almost zero error checking here. This is for illustrative purposes.
+ * YMMV
  *
  * @author warren.strange@oracle.com
  */
@@ -55,8 +56,8 @@ public class OAMPolicyManager {
     // constants for our demo.
     public static final String DATASTORE = "OUD"; // OAM datastore used for policies
     public static final String HOSTIDENTIFIER = "ohs1";
+    // Create this policy in OAM before the your run the demo
     public static final String DEFAULT_AUTHN_POLICY = "DefaultAuthenticationPolicy";
-            
     Client client;
     WebResource base;
     String appDomain;
@@ -77,35 +78,31 @@ public class OAMPolicyManager {
                 path("/oam/services/rest/11.1.2.0.0/ssa/policyadmin").
                 queryParam("appdomain", appDomain);
         try {
-            // Does not work in weblogic ....
-            //ClassLoader cl = ObjectFactory.class.getClassLoader();
-            // jaxb = JAXBContext.newInstance("com.demo.jaxb", cl);
-            // Try this..
-            
+            // classloader tricks needed for Weblogic to find the jaxb stuff
+
             jaxb = JAXBContext.newInstance("com.demo.jaxb", this.getClass().getClassLoader());
         } catch (JAXBException ex) {
             Logger.getLogger(OAMPolicyManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public String getAppDomainXML() {
-        return base.path("/appdomain").get(String.class);
+    public String getXML(String path) { return base.path(path).get(String.class); }
+   
+
+    /**
+     * Get a resource object
+     */
+    public Resource getResource(Resource r) {
+        return base.path("/resource").
+                queryParam("name", r.getName()).get(Resource.class);
     }
 
-    public String getResourcesXML() {
-        return base.path("/resource").get(String.class);
-    }
-
-    public String getAuthNPolicyXML() {
-        return base.path("/authnpolicy").get(String.class);
-    }
-
-    /** 
+    /**
      * Get the AuthN policy specified
+     *
      * @param name - the policy name
      * @returns the AuuthN policy or null if not found
      */
-    
     public AuthenticationPolicy getAuthNPolicy(String name) {
         ClientResponse r = base.path("/authnpolicy").
                 queryParam("name", name).
@@ -116,14 +113,13 @@ public class OAMPolicyManager {
         return (r.getStatus() == 200 ? p.getAuthenticationPolicy().get(0) : null);
 
     }
-    
-    /** 
+
+    /**
      * Get the AuthZ policy specified
+     *
      * @param name - the policy name
      * @returns the AuuthN policy or null if not found
      */
-    
-
     public AuthorizationPolicy getAuthZPolicy(String name) {
         ClientResponse r = base.path("/authzpolicy").
                 queryParam("name", name).
@@ -144,8 +140,10 @@ public class OAMPolicyManager {
     }
 
     /**
-     * Create a Resource Object 
-     * @param resourceURL - the url to protect. eg. /foo/**
+     * Create a Resource Object
+     *
+     * @param resourceURL - the url to protect. eg. /foo/
+     **
      * @param hostIdentifier - the OAM host identifier. Eg. ohs1
      * @return The resource object
      */
@@ -163,20 +161,24 @@ public class OAMPolicyManager {
         return r;
     }
 
+    public AuthorizationPolicy getAuthorizationPolicy(String name) {
+        return base.path("/authzpolicy").
+                queryParam("name", name).get(AuthorizationPolicy.class);
+    }
     /**
      * Make an AuthZ Policy object that enforces group access
      *
      * @param name - name of the AuthZ Policy
-     * @param groupName - LDAP Group Name. User must be in this group 
+     * @param groupName - LDAP Group Name. User must be in this group
      * @return
      */
     public AuthorizationPolicy makeAuthorizationPolicyObj(String name, String groupName) {
         AuthorizationPolicy p = new AuthorizationPolicy();
 
         p.setApplicationDomainName(appDomain);
-        p.setName("AuthZPolicy-" + name);
+        p.setName(name + "-" + groupName);
         p.setDescription("AuthZ Policy for " + name + ". Auto Created at " + new Date().toString());
-        
+
         // create conditions. e.g. Group Membership
         Conditions c = new Conditions();
         p.setConditions(c);
@@ -184,14 +186,21 @@ public class OAMPolicyManager {
         IdentityCondition idc = new IdentityCondition();
         String conditionName = "GroupCondition-" + groupName;
         idc.setName(conditionName);
+        
         Identity id = new Identity();
         id.setIdentityDomain(DATASTORE);
-        //id.setType(IdentityType.LDAP_SEARCH_FILTER);       
+        
+        // for ldap filter
+        //id.setType(IdentityType.LDAP_SEARCH_FILTER);   
+        //id.setSearchFilter("\"(objectclass=foo*)\"");
+        
+        // For ldap group search
         id.setType(IdentityType.GROUP);
         id.setSearchFilter(groupName);
         id.setName(groupName);
-
         
+     
+
         Identities ids = new Identities();
         ids.getIdentity().add(id);
         idc.setIdentities(ids);
@@ -201,18 +210,26 @@ public class OAMPolicyManager {
         Rule r = new Rule();
         RuleCombiner rc = new RuleCombiner();
 
-        SimpleCombiner simple = new SimpleCombiner(); 
+       
+        SimpleCombiner simple = new SimpleCombiner();
 
         simple.setCombinerMode(RuleConditionCombiner.ALL);
         SimpleCombiner.Conditions sc = new SimpleCombiner.Conditions();
         simple.setConditions(sc);
         sc.getCondition().add(conditionName);
-
+        rc.setSimpleCombiner(simple);
         r.setCombinerType(CombinerType.SIMPLE);
-        RuleCombiner combine = new RuleCombiner();
+       
+
+        // Try this for expression combiner
+        //r.setCombinerType(CombinerType.EXPRESSION);
+        //rc.setExpression(conditionName);
+     
+        
+        
         r.setCombiner(rc);
         r.setEffect(RuleEffect.ALLOW);
-        rc.setSimpleCombiner(simple);
+        
         AuthorizationPolicy.Rules rules = new AuthorizationPolicy.Rules();
         rules.getRule().add(r);
 
@@ -225,7 +242,8 @@ public class OAMPolicyManager {
     }
 
     /**
-     * Create a Resource 
+     * Create a Resource
+     *
      * @param r - obj describing resource
      * @return - the id of the created resource
      */
@@ -241,8 +259,8 @@ public class OAMPolicyManager {
     }
 
     /**
-     * Create an OAM AuthZ Policy 
-     * 
+     * Create an OAM AuthZ Policy
+     *
      * @param authPolicy
      * @return - Response string (URI to created policy)
      */
@@ -264,82 +282,96 @@ public class OAMPolicyManager {
         return r.toString();
     }
     
+    private String updateAuthZPolicy(AuthorizationPolicy p) {
+         JAXBElement e = objFactory.createAuthorizationPolicy(p);
+        ClientResponse r = base.path("/authzpolicy").
+                type(MediaType.APPLICATION_XML).
+                put(ClientResponse.class, e);
+        return r.toString();
+    }
+    
+
     /**
      * Add the resource id to the default AuthN policy
+     *
      * @param id - resource id
      */
     public void addResourceToDefaultAuthnPolicy(String id) {
-         AuthenticationPolicy authn = getAuthNPolicy(DEFAULT_AUTHN_POLICY);
-         List<String> res = authn.getResources().getResource();
-         res.add(id);
-         updateAuthNPolicy(authn);
+        AuthenticationPolicy authn = getAuthNPolicy(DEFAULT_AUTHN_POLICY);
+        List<String> res = authn.getResources().getResource();
+         
+        res.add(id); //todo: Fix double add
+        updateAuthNPolicy(authn);
     }
 
-    
     /**
-     * Add an Application to OAM by creating the appropriate policies to
-     * protect the app
-     * 
+     * Remove the resource id to the default AuthN policy
+     *
+     * @param id - resource id
+     */
+    public void removeResourceFromDefaultAuthnPolicy(Resource r) { 
+        AuthenticationPolicy authn = getAuthNPolicy(DEFAULT_AUTHN_POLICY);
+        List<String> res = authn.getResources().getResource();
+        res.clear(); // PUT requires delta
+        //res.remove(r.getId());
+        updateAuthNPolicy(authn);
+    }
+    
+     
+
+    /**
+     * Add an Application to OAM by creating the appropriate policies to protect
+     * the app
+     *
      * @param appName - Name of the Application
      * @param ldapGroup - Group that is allowed to access the Application
      * @param urlPattern - URL to protect access
      */
     public void addApplication(String appName, String ldapGroup, String urlPattern) {
         p("Create Application: name=" + appName + " group=" + ldapGroup + " url=" + urlPattern);
+
+        String group = Util.cleanLdapGroup(ldapGroup);
         // First Create a resource
-         Resource r = makeResourceObj(urlPattern, HOSTIDENTIFIER);
-         deleteName(r.getName(), "/resource"); // delete it just in case
-         String id = createResource(r);   
-         p("Created Resource to protect " + urlPattern + ". ID = " + id);
-         
+        Resource r = makeResourceObj(urlPattern, HOSTIDENTIFIER);
+        String id = createResource(r);
+        p("Created Resource to protect " + urlPattern + ". ID = " + id);
+
         addResourceToDefaultAuthnPolicy(id);
-        
+
         // Create a new AuthZ Policy that uses the group filter
-             
-         AuthorizationPolicy authPolicy = makeAuthorizationPolicyObj(appName, ldapGroup);
-         // Add our Resource to the policy
-         authPolicy.getResources().getResource().add(id);
+        AuthorizationPolicy authPolicy = makeAuthorizationPolicyObj(appName, group);
+        // Add our Resource to the policy
+        List<String> policies = authPolicy.getResources().getResource();
+        policies.add(id);
+        p("Added resource id " + id + " to list. size list=" + policies.size());
         // Create it
-         createAuthorizationPolicy(authPolicy);   
+        String response = createAuthorizationPolicy(authPolicy);
+        p("Created Aith Policy. Response=" + response);
     }
-    
-    /**
-     * Read a file that specifies the Application Parameters. Create Policies
-     * For that Application
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-       
-        String URL = "http://unit1122.oracleads.com:7001/";
-        String OAMDomain = "OAMApplication";
-        String username = "weblogic";
-        String password = "Oracle123";
 
-        OAMPolicyManager pm = new OAMPolicyManager(URL, OAMDomain, username, password);
-
-        String fileName = "app.txt"; //default 
-        if( args.length >= 1) {
-            fileName = args[0];
-        }
+    public void removeApplication(String appName, String groupName, String urlPattern) {
+        // delete the resource. 
+        Resource r = makeResourceObj(urlPattern, HOSTIDENTIFIER);
+               
+        // delete AuthZ policy. This deletes the resource for us
+        deleteName(appName + "-" + groupName,"/authzpolicy");
         
-                 
-        try {
-            InputStream fis = new FileInputStream(fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
-            String line;
-            while ((line = br.readLine()) != null) {
-                if( ! line.startsWith("#")) {
-                    String []field = line.split(",");
-                    pm.addApplication(field[0],field[2],field[3]);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // remove resource from the authN policy
+        removeResourceFromDefaultAuthnPolicy(r);  
+        
+       // delete the resource. T
+        deleteName(r.getName(), "/resource"); // delete resource obj        
     }
 
-    // print String s to stdout
-    static void p(String s) { System.out.println(s);}
+    
 
+    // dump string to logger
+    void p(String s) {
+        //System.out.println(s);
+        Logger.getLogger(OAMPolicyManager.class.getName()).log(Level.INFO, s);
+    }
+
+    
+
+   
 }

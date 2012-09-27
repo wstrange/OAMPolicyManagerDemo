@@ -1,0 +1,5 @@
+#!/bin/bash 
+. ./env.sh
+
+curl -u $USER:$PW $URL/resource?appdomain=$APPDOMAIN 
+ 
