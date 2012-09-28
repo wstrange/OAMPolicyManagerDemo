@@ -17,6 +17,10 @@ app.txt provides sample input.
 The scripts/ directory contains some useful curl scripts to help when you are 
 debugging. 
 
-The demo as configured expects there to be an application domain called "OAMApplication", 
-a Host Identifier called "ohs1" and and an Authentication Policy called "DefaultAuthenticationPolicy".
-The default data store for LDAP is "OUD".  (yes - these should not be hard coded :-) ). Edit to suit your environment.
+The demo as configured expects the following OAM configuration:
+* Application Domain: "OAMApplication"
+* Host Identifier: "ohs1"
+* Authentication Policy: "DefaultAuthenticationPolicy"
+* User LDAP Store: "OUD"
+
+(Yes - these should not be hard coded ). Edit to suit your environment.
