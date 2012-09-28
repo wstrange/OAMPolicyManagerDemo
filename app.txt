@@ -1,4 +1,6 @@
 # Sample Application Input File
+# We use the App Name, the LDAP group, and the URL to create policies that 
+# protect that application and restrict it to users in the group
 # Application Name, Application Role Name, Associated LDAP Group Name, Application URL, Application Approver
 TestApp1|TestAppRole1|cn=Engineering,ou=People,dc=example,dc=com|/app/eng/**|user1
 TestApp2|TestAppRole2|cn=HR,ou=People,dc=example,dc=com|/app/hr/**|user1

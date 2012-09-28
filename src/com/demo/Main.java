@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
 
 /**
  *
- * @author warren
+ * @author warren.strange@oracle.com
  */
 public class Main {
     /**
@@ -22,8 +22,6 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-        //String URL = "http://unit1122.oracleads.com:7001/";
         //String URL = "http://osc2:17001/";
         String URL = "http://osc:7001/";
         String OAMDomain = "OAMApplication";
@@ -33,11 +31,14 @@ public class Main {
 
         OAMPolicyManager pm = new OAMPolicyManager(URL, OAMDomain, username, password);
 
-        String fileName = "app.txt"; //default file name
+        String fileName = "app.txt"; //default input file name to look for
         if (args.length >= 1) {
             fileName = args[0];
         }
         
+        
+        // set this to true to remove the policies instead of create. 
+        // TODO: Make this an arg flag
         boolean removeFlag = false;
         
         try {
@@ -46,6 +47,9 @@ public class Main {
             String line;
             while (
                     (line = br.readLine()) != null) {
+                // input file is csv with pipe delimeter
+                // Lines starting with # are ignored
+                // see app.txt for sample input
                 if (!line.startsWith("#")) {
                     String[] field = line.split("\\|");
                     

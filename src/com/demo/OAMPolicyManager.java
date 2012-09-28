@@ -29,11 +29,6 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.api.client.filter.LoggingFilter;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -101,7 +96,7 @@ public class OAMPolicyManager {
      * Get the AuthN policy specified
      *
      * @param name - the policy name
-     * @returns the AuuthN policy or null if not found
+     * @returns the AuthN policy or null if not found
      */
     public AuthenticationPolicy getAuthNPolicy(String name) {
         ClientResponse r = base.path("/authnpolicy").
@@ -220,12 +215,9 @@ public class OAMPolicyManager {
         rc.setSimpleCombiner(simple);
         r.setCombinerType(CombinerType.SIMPLE);
        
-
-        // Try this for expression combiner
+        // Alternative for expression combiner
         //r.setCombinerType(CombinerType.EXPRESSION);
-        //rc.setExpression(conditionName);
-     
-        
+        //rc.setExpression(conditionName);   
         
         r.setCombiner(rc);
         r.setEffect(RuleEffect.ALLOW);
@@ -317,8 +309,6 @@ public class OAMPolicyManager {
         updateAuthNPolicy(authn);
     }
     
-     
-
     /**
      * Add an Application to OAM by creating the appropriate policies to protect
      * the app
@@ -361,17 +351,11 @@ public class OAMPolicyManager {
         
        // delete the resource. T
         deleteName(r.getName(), "/resource"); // delete resource obj        
-    }
-
-    
+    } 
 
     // dump string to logger
     void p(String s) {
-        //System.out.println(s);
         Logger.getLogger(OAMPolicyManager.class.getName()).log(Level.INFO, s);
     }
-
-    
-
    
 }
