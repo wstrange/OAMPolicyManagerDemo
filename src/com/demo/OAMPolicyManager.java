@@ -337,10 +337,12 @@ public class OAMPolicyManager {
         p("Created Aith Policy. Response=" + response);
     }
 
-    public void removeApplication(String appName, String groupName, String urlPattern) {
+    public void removeApplication(String appName, String ldapGroup, String urlPattern) {
         // delete the resource. 
         Resource r = makeResourceObj(urlPattern, HOSTIDENTIFIER);
                
+         String groupName = Util.cleanLdapGroup(ldapGroup);
+         
         // delete AuthZ policy. This deletes the resource for us
         deleteName(appName + "-" + groupName,"/authzpolicy");
         
