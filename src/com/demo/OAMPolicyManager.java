@@ -194,8 +194,6 @@ public class OAMPolicyManager {
         id.setSearchFilter(groupName);
         id.setName(groupName);
         
-     
-
         Identities ids = new Identities();
         ids.getIdentity().add(id);
         idc.setIdentities(ids);
